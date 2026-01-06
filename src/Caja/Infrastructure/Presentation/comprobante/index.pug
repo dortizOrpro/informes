@@ -1,0 +1,171 @@
+style.
+    html {
+        width: 100%;
+    }
+    body {
+        padding: 0;
+        margin: 0;
+        font-family: sans-serif;
+        font-size: 9pt;
+    }
+    p {
+        padding: 0;
+        margin: 0;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    td {
+        background-color: white;
+        text-align: left;
+        padding: 0.25rem;
+        border: 1px solid black;
+    }
+    th {
+        background-color: lightgray;
+        text-align: left;
+        padding: 0.25rem;
+        border: 1px solid black;
+    }
+
+    table.totales tbody td,table.totales tfoot td {
+        text-align: right;
+        font-size: 9pt;
+    }
+    h1 {
+        font-size: 16pt;
+    }
+    h2 {
+        font-size: 10pt;
+    }
+    h1,h2,h3 {
+        padding-top: 1rem;
+        margin: 0;
+    }
+    .folio {
+        font-family: courier,monospace;
+        border: 3px solid black;
+        padding: 0.5rem;
+        width: 25%;
+        font-size: 12pt;
+    }
+    .folio p {
+        text-align: center;
+        font-family: courier,monospace;
+        font-weight: bold;
+    }
+    .no-border {
+        border: none!important;
+    }
+    p.xs {
+        font-size: 7pt;
+        padding-top: 0.5rem;
+        font-weight: normal;
+    }
+    .logo {
+        width: 25%;
+    }
+table
+    tr
+        td.no-border.logo
+            != $logo
+        td.no-border
+            h1 COMPROBANTE DE CAJA
+        td.folio
+            p FOLIO
+            p N° #{$cabecera.comprobante_id}
+            p.xs HOJA 1/1
+
+h2 INFORMACION DEL PAGO
+table
+    tr
+        th(style="width:20%") N° COBRANZA
+        td(style="width:30%") #{$cabecera.cobranza_id}
+        th(style="width:20%") N° PREINGRESO
+        td(style="width:30%") #{$cabecera.preingreso_id}
+    tr
+        th AGENCIA
+        td (#{$cabecera.agencia_id}) #{$cabecera.agencia}
+        th CLIENTE
+        td (#{$cabecera.producto_id}) #{$cabecera.alias}
+    tr
+        th RESPONSABLE
+        td #{$cabecera.usuario_id}
+        th FECHA
+        td #{$cabecera.fecha}
+    //--tr
+        th CAUSA
+        td(colspan=3) X-123-2025 Juzgado Previsional de Prueba
+    tr
+        th NOMBRE
+        td(colspan=3) #{$cabecera.razon_social}
+    tr
+        th R.U.T.
+        td #{$cabecera.rut}
+        th TIPO PAGO
+        td #{$cabecera.tipopago_id}
+
+h2 DETALLE DEL PAGO
+table.totales
+    thead
+        tr
+            th(style="width: 1.5rem") N°
+            th DOCUMENTO
+            th PERIODO
+            th CAPITAL
+            th INTERES
+            th REAJUSTE
+            th RECARGO
+            th A PAGO
+    tbody
+        each $documento,$key in $detalle
+            tr
+                td #{$key + 1}
+                td #{$documento.resolucion}
+                td #{date('m/Y',strtotime($documento.periodo))}
+                td $ #{number_format(round($documento.capital),0,',','.')}
+                td $ #{number_format(round($documento.intereses),0,',','.')}
+                td $ #{number_format(round($documento.reajuste),0,',','.')}
+                td $ #{number_format(round($documento.recargo),0,',','.')}
+                td $ #{number_format(round($documento.apago),0,',','.')}
+        each $linea in range(count($detalle) + 1,20)
+            tr
+                td #{$linea}
+                td ---
+                td ---
+                td ---
+                td ---
+                td ---
+                td ---
+                td ---
+    tfoot
+        tr
+            td(colspan=5 rowspan=7)
+            th(colspan=2) A RENDIR
+            td $ #{number_format(round(cabecera.apago),0,',','.')}
+        tr
+
+            th(colspan=2) GASTOS
+            td $ #{number_format(round(cabecera.gastos),0,',','.')}
+        tr
+
+            th(colspan=2) HONORARIOS
+            td $ #{number_format(round(cabecera.honorarios),0,',','.')}
+        tr
+
+            th(colspan=2) PROCURADURIA
+            td $ #{number_format(round(cabecera.procuraduria),0,',','.')}
+        tr
+            - afecto = round(cabecera.procuraduria) + round(cabecera.honorarios)
+            th(colspan=2) TOTAL AFECTO
+            td $ #{number_format($afecto,0,',','.')}
+        tr
+
+            th(colspan=2) IVA
+            td $ #{number_format(round($afecto * 19/100),0,',','.')}
+        tr
+            - total = round(cabecera.apago) + round(cabecera.gastos) + round(afecto) + round(afecto * 19/100)
+            th(colspan=2) TOTAL
+            td $ #{number_format(total,0,',','.')}

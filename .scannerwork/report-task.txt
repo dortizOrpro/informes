@@ -1,0 +1,6 @@
+projectKey=recaudacion
+serverUrl=http://localhost:9000
+serverVersion=25.7.0.110598
+dashboardUrl=http://localhost:9000/dashboard?id=recaudacion
+ceTaskId=98f879bd-9c26-4ab4-a0ec-bd63a58689e2
+ceTaskUrl=http://localhost:9000/api/ce/task?id=98f879bd-9c26-4ab4-a0ec-bd63a58689e2
