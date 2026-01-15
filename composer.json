@@ -26,7 +26,8 @@
         "robsontenorio/mary": "^2.4",
         "sentry/sentry-laravel": "^4.18",
         "simplesoftwareio/simple-qrcode": "^4.2",
-        "socialiteproviders/keycloak": "^5.3"
+        "socialiteproviders/keycloak": "^5.3",
+        "spatie/simple-excel": "^3.8"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.15",

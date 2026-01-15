@@ -4,23 +4,19 @@ use App\Http\Controllers\Auth\Callback;
 use App\Http\Controllers\Auth\Login;
 use App\Http\Controllers\Auth\LogOut;
 use Illuminate\Support\Facades\Route;
-use Src\Caja\Infrastructure\Controllers\CajaController;
-use Src\Caja\Infrastructure\Controllers\CalculadoraController;
-use Src\Caja\Infrastructure\Controllers\ComprobanteController;
-use Src\Caja\Infrastructure\Controllers\PagoController;
-use Src\Caja\Infrastructure\Controllers\PagosController;
-use Src\Rendicion\Infrastructure\Controllers\RendicionController;
+use Src\Procesos\Infraestructure\Controllers\ActividadesMasivasController;
+use Src\Informes\Infraestructure\Controllers\CronologiaController;
+use Src\Informes\Infraestructure\Controllers\FichasController;
+use Src\Informes\Infraestructure\Controllers\InformeController;
 
 $routeMiddleware = App::environment() === 'production' ?['auth'] : [];
 //dd(App::environment());
 Route::middleware($routeMiddleware)->group(function () {
-    Route::get('/calculadora', CalculadoraController::class)->name('recaudacion.calculadora');
-    Route::get('/informes', CajaController::class)->name('recaudacion');
-    Route::get('/caja', CajaController::class)->name('recaudacion.caja');
-    Route::get('/pago/{id}', PagoController::class)->name('recaudacion.pago');
-    Route::get('/pagos', PagosController::class)->name('recaudacion.pagos');
-    Route::get('/rendiciones', RendicionController::class)->name('recaudacion.rendicion');
-    Route::get('/comprobante/pdf/{id}', ComprobanteController::class)->name('comprobante.pdf')->name('recaudacion.comprobante');
+    Route::get('/informes', InformeController::class)->name('informes');
+    Route::get('/cronologias', CronologiaController::class)->name('informes.cronologias');
+    Route::get('/equivalencias', InformeController::class)->name('informes.equivalencias');
+    Route::get('/fichas', FichasController::class)->name('informes.fichas');
+    Route::get('/actividades-masivas', ActividadesMasivasController::class)->name('actividades.masivas');
 });
 
 Route::get('/login', Login::class)
