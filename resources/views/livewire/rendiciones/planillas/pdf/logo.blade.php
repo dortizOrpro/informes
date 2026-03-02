@@ -1,1 +1,0 @@
-<img class="logo" src="{{ public_path('images/logos/capital.png') }}" alt="Logo" style="position: absolute; top: 0; left: 0; height: 15mm; width: auto;">
