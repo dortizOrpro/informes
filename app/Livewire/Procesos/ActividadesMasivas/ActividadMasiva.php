@@ -13,6 +13,6 @@ class ActividadMasiva extends Component
 
     public function render()
     {
-        return view('livewire.procesos.actividadesMasivas.parametros');
+        return view('livewire.procesos.actividadesmasivas.parametros');
     }
 }
