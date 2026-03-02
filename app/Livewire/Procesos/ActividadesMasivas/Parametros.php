@@ -24,7 +24,7 @@ class Parametros extends Component
 
     public function render()
     {
-        return view('livewire.procesos.actividadesMasivas.inicio',
+        return view('livewire.procesos.actividadesmasivas.inicio',
             [
                 'tipos'=> [
                     [
