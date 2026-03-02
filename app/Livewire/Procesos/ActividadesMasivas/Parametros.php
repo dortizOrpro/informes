@@ -49,14 +49,13 @@ class Parametros extends Component
 
     public function procesar(GuardarActividadMasivaUseCase $uc)
     {
+
         $strUid = uniqid(date('YmdHis'), true) . '.xlsx';
         $this->excelCobranzas->storeAs('actividades', $strUid );
         $excel = SimpleExcelReader::create(Storage::path('actividades/' . $strUid));
 
         $rows = $excel->useHeaders(['cobranza_id', 'fecha'])->getRows();
-       
-        // $rows->each(fn($row) => $uc->run($this->actividad, $this->tipo, $row));
-
+    
         $resultado = $uc->run($this->actividad, $this->tipo, $rows);
 
         match ($resultado['code']) {
@@ -74,5 +73,4 @@ class Parametros extends Component
             ),
         };
     }
-
 }

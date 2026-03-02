@@ -14,9 +14,7 @@ readonly class GuardarActividadMasivaUseCase
 
     public function run($actividad_id, $tipo, $rows)
     {
-
         $result = $this->actividadRepository->guardarActividadMasiva($actividad_id, $tipo, $rows);
-
         return $result;
     }
 }
