@@ -1,4 +1,5 @@
-<div>
+<div>    
+    <x-cds::loading/>
     @switch($criterio)
         @case(2)
             <div class="grid grid-cols-3 gap-3 w-2xl px-8 pt-8">

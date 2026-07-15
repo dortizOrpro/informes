@@ -34,7 +34,6 @@ class FichaGeneratorService
             $this->zip->open($zipPath, \ZipArchive::CREATE);
 
             $excel = SimpleExcelReader::create($this->ruta);
-
             $ids = $this->repositorio->{$this->criterio}($excel, $criterios);
 
             collect($ids)->each(fn($id) => $this->agregarFicha($id));
@@ -71,9 +70,9 @@ class FichaGeneratorService
         $this->criterio = match ($datos['criterio']) {
             1 => 'getById',
             2 => 'getByRutEmpleador',
-            3 => 'getByCliente',
-            4 => 'getByResolucion',
-            5 => 'getByRitJuzgado',
+            3 => 'getByResolucion',
+            4 => 'getByRitJuzgado',
+            5 => 'getByCliente',
         };
     }
 

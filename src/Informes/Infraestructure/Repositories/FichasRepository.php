@@ -33,15 +33,17 @@ class FichasRepository
        
         $cobranzas = DB::table('cobranzas.cobranza')
                     ->join('cobranzas.cobranza_estado', 'cobranzas.cobranza.id', '=', 'cobranzas.cobranza_estado.cobranza_id')
+                    ->join('gui.empresa', 'cobranzas.cobranza.cliente','=', 'gui.empresa.id')
                     ->whereIn('cobranza.rut_empleador', $ruts)
                     ->when(
                         $this->resolucion,
                         fn ($q, $r) => $q->where('resolucion', 'LIKE', '%' . $r . '%')
                     )
-                    ->when($this->cliente, fn($q, $c) => $q->where('cobranzas.cobranza.cliente', $c))
+                    ->when($this->cliente, fn($q, $c) => $q->where('gui.empresa.spensiones_empresa_id', $c))
                     ->when($this->estado, fn($q, $e) => $q->where('cobranzas.cobranza_estado.estado_id', $e))
                     ->when($this->tipo, fn($q, $t) => $q->where('cobranzas.cobranza.categoria_id', $t))
-                    ->pluck('id')->unique()->values()->all();
+                    ->pluck('cobranzas.cobranza.id')->unique()->values()->all();
+   
         return $cobranzas;
 
     }   
@@ -62,7 +64,8 @@ class FichasRepository
         $cobranzas = DB::table('remesas.deuda as d')
         ->join('cobranzas.cobranza_deuda as cd', 'cd.deuda_id', '=', 'd.id')
         ->join('cobranzas.cobranza as c', 'c.id', '=', 'cd.cobranza_id')
-        ->when($this->cliente, fn($q, $c) => $q->where('c.cliente', $c))
+        ->join('gui.empresa as e', 'c.cliente','=', 'e.id')
+        ->when($this->cliente, fn($q, $c) => $q->where('e.spensiones_empresa_id', $c))
         ->where(function ($q) use ($resoluciones) {
             foreach ($resoluciones as $r) {
                 $q->orWhere('d.resolucion', 'LIKE', '%' . $r . '%');

@@ -1,4 +1,24 @@
-<div>
+<div>    
+    <?php if (isset($component)) { $__componentOriginalc31aa031a08eb4649f0db419eaccec93 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalc31aa031a08eb4649f0db419eaccec93 = $attributes; } ?>
+<?php $component = Src\Shared\UserInterface\Components\Loading::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('cds::loading'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Src\Shared\UserInterface\Components\Loading::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalc31aa031a08eb4649f0db419eaccec93)): ?>
+<?php $attributes = $__attributesOriginalc31aa031a08eb4649f0db419eaccec93; ?>
+<?php unset($__attributesOriginalc31aa031a08eb4649f0db419eaccec93); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalc31aa031a08eb4649f0db419eaccec93)): ?>
+<?php $component = $__componentOriginalc31aa031a08eb4649f0db419eaccec93; ?>
+<?php unset($__componentOriginalc31aa031a08eb4649f0db419eaccec93); ?>
+<?php endif; ?>
     <!--[if BLOCK]><![endif]--><?php switch($criterio):
         case (2): ?>
             <div class="grid grid-cols-3 gap-3 w-2xl px-8 pt-8">
