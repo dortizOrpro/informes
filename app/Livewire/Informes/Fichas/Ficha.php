@@ -58,7 +58,7 @@ class Ficha extends Component
 
         $path = $this->excelCobranzas->store('fichas', 'public');
 
-        $this->dispatch('generarFichas', ruta: $path);
+        $this->dispatch('generarFichas',  $path);
     }
 
     public function render()
