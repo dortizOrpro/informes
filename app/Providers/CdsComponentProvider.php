@@ -30,7 +30,6 @@ class CdsComponentProvider extends ServiceProvider
         });
 
         $this->loadViewsFrom(app_path('../src/Shared/UserInterface/Components/views'), 'cds');
-        $this->loadViewsFrom(app_path('../src/Caja/Infrastructure/Presentation'), 'caja');
         Blade::componentNamespace('Src\\Shared\\UserInterface\\Components', 'cds');
         Livewire::component('cds::file-upload', FileUpload::class);
     }
