@@ -35,9 +35,7 @@ JOIN cobranzas.cobranza_rit cr
 JOIN cronologia cro
     ON cro.codigo_id = a.codigo_id
 WHERE c.cliente = 78236399
-    AND a.digitado BETWEEN
-        '2026-06-01 00:00:00'
-        AND '2026-08-03 23:59:59'
+    AND a.digitado BETWEEN :fecha_ini AND :fecha_fin
     AND a.codigo_id NOT IN (1201,1209)
 ORDER BY
     a.cobranza_id,

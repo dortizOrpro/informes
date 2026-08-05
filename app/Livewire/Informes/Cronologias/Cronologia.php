@@ -60,7 +60,8 @@ class Cronologia extends Component
         if (
             $this->cliente > 0 &&
             $this->salida > 0 &&
-            !is_null($this->fecha_inicio)
+            !is_null($this->fecha_inicio) &&
+            !is_null($this->fecha_fin)
         ) {
             return $uc->run([
                 'cliente'   => $this->cliente,

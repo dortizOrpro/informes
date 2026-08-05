@@ -2,6 +2,7 @@
 
 namespace Src\Procesos\Infraestructure\Repositories;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Spatie\SimpleExcel\SimpleExcelWriter;
@@ -45,7 +46,10 @@ class CronologiaRepository implements CronologiaRepositoryContract
             resource_path('sql/cronologias/dat/'.$params['cliente'].'.sql')
         );
 
-        $data = DB::select($sql);
+        $data = DB::select($sql,      [
+            'fecha_ini' => Carbon::parse($params['fecha_ini'])->startOfDay()->format('Y-m-d H:i:s'),
+            'fecha_fin' => Carbon::parse($params['fecha_fin'])->endOfDay()->format('Y-m-d H:i:s'),
+        ]);
 
         $name = $this->filename($params['salida'], $params['extras']);
 
