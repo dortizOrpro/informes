@@ -12,7 +12,7 @@ use Src\Informes\Infraestructure\Controllers\InformeController;
 $routeMiddleware = App::environment() === 'production' ?['auth'] : [];
 //dd(App::environment());
 Route::middleware($routeMiddleware)->group(function () {
-    Route::get('/informes', InformeController::class)->name('informes');
+    Route::get('/', InformeController::class)->name('informes');
     Route::get('/cronologias', CronologiaController::class)->name('informes.cronologias');
     Route::get('/equivalencias', InformeController::class)->name('informes.equivalencias');
     Route::get('/fichas', FichasController::class)->name('informes.fichas');
