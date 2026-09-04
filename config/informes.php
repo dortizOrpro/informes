@@ -29,4 +29,16 @@ return [
         // 'action' => 'informe.tablas-cronologias',
         'route' => 'informes.equivalencias',
     ],
+    [
+        'icon' => 'carbon.xls',
+        'title' => 'Archivo semanal operaciones',
+        'description' => 'Informe semanal de operaciones',
+        'route' => 'informes.semanal-operaciones',
+    ],
+    [
+        'icon' => 'carbon.xls',
+        'title' => 'Cartera en tramitación',
+        'description' => 'Informe cartera entramitación',
+        'route' => 'informes.cartera-tramitacion',
+    ],
 ];

@@ -8,8 +8,10 @@ use Src\Procesos\Infraestructure\Controllers\ActividadesMasivasController;
 use Src\Informes\Infraestructure\Controllers\CronologiaController;
 use Src\Informes\Infraestructure\Controllers\FichasController;
 use Src\Informes\Infraestructure\Controllers\InformeController;
+use Src\Informes\Infraestructure\Controllers\SemanalOperacionesController;
+use Src\Informes\Infraestructure\Controllers\CarteraTramitacionController;
 
-$routeMiddleware = App::environment() === 'production' ?['auth'] : [];
+$routeMiddleware = App::environment() === 'production' ? ['auth'] : [];
 //dd(App::environment());
 Route::middleware($routeMiddleware)->group(function () {
     Route::get('/informes', InformeController::class)->name('informes');
@@ -17,6 +19,10 @@ Route::middleware($routeMiddleware)->group(function () {
     Route::get('/equivalencias', InformeController::class)->name('informes.equivalencias');
     Route::get('/fichas', FichasController::class)->name('informes.fichas');
     Route::get('/actividades-masivas', ActividadesMasivasController::class)->name('actividades.masivas');
+    Route::get('/semanal-operaciones', SemanalOperacionesController::class)
+        ->name('informes.semanal-operaciones');
+    Route::get('/cartera-tramitacion', CarteraTramitacionController::class)
+        ->name('informes.cartera-tramitacion');
 });
 
 Route::get('/login', Login::class)
