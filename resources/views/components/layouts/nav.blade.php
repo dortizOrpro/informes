@@ -1,3 +1,7 @@
+<?php
+    $user = auth()->user();
+    $ambiente = config('app.env');
+?>
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -15,81 +19,78 @@
 </head>
 <body class="min-h-screen font-sans antialiased bg-base-100">
 
-<x-cds::nav sticky full-width class="bg-secondary z-50 h-[3rem]">
-    <x-slot:left-actions>
+@if(in_array($ambiente,['production','testing']))
 
-    </x-slot:left-actions>
-    <x-slot:brand>
-        <x-icon name="carbon.circle-filled" class="text-secondary-content"
-                label="Sistema de Gestión de Cobranzas 2025 -- TEST"/>
+@else
+    <x-cds::nav sticky full-width @class(["z-50", $ambiente === 'staging' ? 'bg-red-700' : 'bg-green-700' ])>
+        <x-slot:left-actions>
 
-    </x-slot:brand>
+        </x-slot:left-actions>
+        <x-slot:brand>
+            <x-icon name="carbon.circle-filled" class="text-secondary-content"
+                    label="Sistema de Gestión de Cobranzas 2025 --- {{ ucfirst(config('app.env')) }}"/>
+        </x-slot:brand>
+        <x-slot:actions>
+            <label for="side-menu-drawer" class="absolute right-0 drawer-button btn btn-secondary">
+                <x-icon name="carbon.switcher" class="border-0"/>
+            </label>
+        </x-slot:actions>
+    </x-cds::nav>
 
-    <x-slot:actions>
+    {{-- APPLICATION MENU --}}
+    <div class="drawer drawer-end">
+        <input id="side-menu-drawer" type="checkbox" class="drawer-toggle"/>
+        <div class="drawer-side mt-12">
+            <label for="side-menu-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
 
-        <label for="side-menu-drawer" class="absolute right-0 drawer-button btn btn-secondary">
-            <x-icon name="carbon.switcher" class="border-0"/>
-        </label>
-    </x-slot:actions>
-</x-cds::nav>
+            <div class="bg-secondary text-secondary-content min-h-full w-64 border-t-secondary-content/50 border-t">
+                <div class="p-4">
+                    <x-avatar placeholder="RT" class="h-12 w-12">
+                        <x-slot:title class="text-xl font-bold!">
+                            @if($user = auth()->user())
+                                {{ $user->name }}
+                            @else
+                                Anonimo
+                            @endif
 
-{{-- APPLICATION MENU --}}
-<div class="drawer drawer-end z-50">
-    <input id="side-menu-drawer" type="checkbox" class="drawer-toggle"/>
-    <div class="drawer-side mt-[3rem]">
-        <label for="side-menu-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-
-        <div class="bg-secondary text-secondary-content min-h-full w-64 border-t-secondary-content/50 border-t">
-            <div class="p-4">
-                <x-avatar placeholder="RT" class="h-12 w-12">
-                    <x-slot:title class="text-xl !font-bold">
-                        @if($user = auth()->user())
-                            {{ $user->name }}
-                        @else
-                            Anonimo
-                        @endif
-
-                    </x-slot:title>
-                    <x-slot:subtitle class="text-neutral-content">
-                        @if($user = auth()->user())
-                            <p>{{$user->perfil }}</p>
-                        @else
-                            --
-                        @endif
-                    </x-slot:title>
-                </x-avatar>
-            </div>
-            <x-menu class="!p-0">
-                <hr class="bg-secondary border-accent"/>
-                <x-menu-item title="Recaudación" icon="carbon.money" link="/"/>
-                <div class="pl-4">
-                    <x-menu-item title="Calculadora" icon="carbon.calculation-alt" link="/calculadora"/>
-                    <x-menu-item title="Rendiciones" icon="carbon.data-view-alt" link="/rendiciones"/>
+                        </x-slot:title>
+                        <x-slot:subtitle class="text-neutral-content">
+                            @if($user = auth()->user())
+                                <p>{{$user->perfil }}</p>
+                            @else
+                                --
+                            @endif
+                        </x-slot:title>
+                    </x-avatar>
                 </div>
-                <hr class="bg-secondary border-accent"/>
-                <x-menu-item title="Remesas" icon="carbon.box" link="https://sgc-remesas.orpro.cl" external="true"/>
-                <x-menu-item title="Cobranzas" icon="carbon.document-multiple-01" link="https://sgc-cobranzas.orpro.cl" external="true"/>
-                <x-menu-item title="Consignaciones" icon="carbon.receipt" link="https://sgc-consignaciones.orpro.cl" external="true"/>
+                <x-menu class="p-0!">
+                    <x-menu-item title="Consignaciones" icon="carbon.receipt" link="https://sgc-consignaciones.orpro.cl" external="true"/>
+                    <x-menu-item title="Recaudación" icon="carbon.money" link="/"/>
+                    <x-menu-item title="Remesas" icon="carbon.box" link="https://sgc-remesas.orpro.cl" external="true"/>
+                    <x-menu-item title="Cobranzas" icon="carbon.document-multiple-01" link="https://sgc-cobranzas.orpro.cl" external="true"/>
 
-                <x-menu-item title="Tramitación" icon="carbon.scales" link="https://sgc-tramitacion.orpro.cl" external="true"/>
 
-                <x-menu-item title="Contactos" icon="carbon.identification" link="https://sgc-contactos.orpro.cl" external="true"/>
-                <x-menu-item title="Contactabilidad" icon="carbon.mail-all" link="https://sgc-contactabilidad.orpro.cl" external="true"/>
-                <x-menu-item title="Inconcert" icon="carbon.phone-application" link="https://sgc-inconcert.orpro.cl" external="true"/>
-                <x-menu-item title="Reportes" icon="carbon.report" link="https://sgc-reportes.orpro.cl" external="true"/>
-                <x-menu-item title="Salir" icon="carbon.logout" link="/logout" no-wire-navigate="true"/>
-            </x-menu>
+                    <x-menu-item title="Tramitación" icon="carbon.scales" link="https://sgc-tramitacion.orpro.cl" external="true"/>
+
+                    <x-menu-item title="Contactos" icon="carbon.identification" link="https://sgc-contactos.orpro.cl" external="true"/>
+                    <x-menu-item title="Contactabilidad" icon="carbon.mail-all" link="https://sgc-contactabilidad.orpro.cl" external="true"/>
+                    <x-menu-item title="Inconcert" icon="carbon.phone-application" link="https://sgc-inconcert.orpro.cl" external="true"/>
+                    <x-menu-item title="Reportes" icon="carbon.report" link="https://sgc-reportes.orpro.cl" external="true"/>
+                    <x-menu-item title="Salir" icon="carbon.logout" link="/logout" no-wire-navigate="true"/>
+                </x-menu>
+
+            </div>
 
         </div>
-
     </div>
-</div>
-{{--/ APPLICATION MENU --}}
+    {{--/ APPLICATION MENU --}}
+@endif
 
 {{-- BREADCRUM --}}
-<div class="bg-base-300 py-1 px-2 sticky top-[3rem] z-20">
+<div  @class(["bg-base-300 py-1 px-2 sticky", in_array($ambiente,['production','testing']) ? 'top-0' : 'top-[48px]'])>
     <div class="breadcrumbs text-sm ms-4">
         <ul>
+            <li>{{ $user?->name ?? '-' }}
             @foreach(explode('.',\Illuminate\Support\Facades\Route::currentRouteName()) as $item)
                 <li>
                     @if($item === 'inicio')
@@ -105,14 +106,11 @@
 {{--/ BREADCRUM --}}
 
 {{-- CONTENIDO --}}
-<div class="w-full z-0">
-    {{ $slot }}
-</div>
-{{--<x-cds::main full-width with-nav collapse-text="" collapse-icon="carbon.menu">--}}
-{{--    <x-slot:content>--}}
-{{--        {{ $slot }}--}}
-{{--    </x-slot:content>--}}
-{{--</x-cds::main>--}}
+<x-cds::main full-width with-nav collapse-text="" collapse-icon="carbon.menu">
+    <x-slot:content>
+        {{ $slot }}
+    </x-slot:content>
+</x-cds::main>
 {{--/ CONTENIDO --}}
 
 <x-toast/>
