@@ -10,6 +10,7 @@ use Src\Informes\Infraestructure\Controllers\FichasController;
 use Src\Informes\Infraestructure\Controllers\InformeController;
 use Src\Informes\Infraestructure\Controllers\SemanalOperacionesController;
 use Src\Informes\Infraestructure\Controllers\CarteraTramitacionController;
+use Src\Informes\Infraestructure\Controllers\ReporteEscritosController;
 
 $routeMiddleware = App::environment() === 'production' ? ['auth'] : [];
 //dd(App::environment());
@@ -23,6 +24,8 @@ Route::middleware($routeMiddleware)->group(function () {
         ->name('informes.semanal-operaciones');
     Route::get('/cartera-tramitacion', CarteraTramitacionController::class)
         ->name('informes.cartera-tramitacion');
+    Route::get('/reporte-escritos', ReporteEscritosController::class)
+        ->name('informes.reporte-escritos');
 });
 
 Route::get('/login', Login::class)

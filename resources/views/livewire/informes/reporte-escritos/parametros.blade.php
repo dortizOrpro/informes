@@ -8,26 +8,23 @@
             </div>
 
             <div class="p-2">
-
                 <div class="flex gap-4 px-4 pt-2">
-                    <div class="flex-none w-1/4 text-start pt-2">Fecha Desde</div>
+                    <div class="flex-none w-1/4 text-start pt-2">
+                        Fecha Desde
+                    </div>
+
                     <div class="flex-none w-3/4">
                         <x-input type="date" wire:model.live="fecha_inicio" />
                     </div>
                 </div>
 
                 <div class="flex gap-4 px-4 pt-2">
-                    <div class="flex-none w-1/4 text-start pt-2">Fecha Hasta</div>
+                    <div class="flex-none w-1/4 text-start pt-2">
+                        Fecha Hasta
+                    </div>
+
                     <div class="flex-none w-3/4">
                         <x-input type="date" wire:model.live="fecha_fin" />
-                    </div>
-                </div>
-
-                <div class="flex gap-4 px-4 pt-2">
-                    <div class="flex-none w-1/4 text-start pt-2">Cliente</div>
-
-                    <div class="flex-none w-3/4">
-                        <x-select :options="$clientes" wire:model.live="cliente" class="w-full" />
                     </div>
                 </div>
 
@@ -35,13 +32,13 @@
                     <div>
                         <x-button label="Volver" link="{{ route('informes') }}" class="w-full" />
                     </div>
+
                     <div>
-                        <x-button label="Reiniciar" wire:click="reiniciar" class="w-full" />
+                        <x-button label="Reiniciar" wire:click="reiniciar()" class="w-full" />
                     </div>
 
                     <div>
-                        <x-button label="Generar" wire:click="generar()" class="btn btn-primary w-full"
-                            :disabled="$cliente == 0" />
+                        <x-button label="Generar" wire:click="generar()" class="btn btn-primary w-full" />
                     </div>
                 </div>
 

@@ -38,7 +38,13 @@ return [
     [
         'icon' => 'carbon.xls',
         'title' => 'Cartera en tramitación',
-        'description' => 'Informe cartera entramitación',
+        'description' => 'Informe cartera en tramitación',
         'route' => 'informes.cartera-tramitacion',
+    ],
+    [
+        'icon' => 'carbon.xls',
+        'title' => 'Reporte escritos',
+        'description' => '',
+        'route' => 'informes.reporte-escritos',
     ],
 ];

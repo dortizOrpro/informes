@@ -38,7 +38,10 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-1 my-3">
+                <div class="grid grid-cols-3 gap-1 my-3">
+                    <div>
+                        <x-button label="Volver" link="{{ route('informes') }}" class="w-full" />
+                    </div>
                     <div>
                         <x-button label="Reiniciar" wire:click="reiniciar()" class="w-full" />
                     </div>
