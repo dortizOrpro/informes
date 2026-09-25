@@ -1,28 +1,382 @@
-WITH base AS (
+WITH
+
+/* =============================================================
+   ACTIVIDADES AGRUPADAS
+   Se procesa actividades.actividad una sola vez para
+   las actividades específicas requeridas.
+   ============================================================= */
+actividades_agg AS (
     SELECT
+        a.cobranza_id,
+
+        /* =====================================================
+           ÚLTIMA ACTIVIDAD PRE
+           ===================================================== */
+        (
+            ARRAY_AGG(
+                a.codigo_id
+                ORDER BY a.fecha DESC NULLS LAST,
+                         a.codigo_id DESC
+            ) FILTER (
+                WHERE a.codigo_id IN (
+                    1100,
+                    1180,
+                    1181,
+                    1190,
+                    1240,
+                    1252,
+                    1330,
+                    1332,
+                    1333,
+                    1335,
+                    1436,
+                    1437,
+                    1443,
+                    1448,
+                    1449,
+                    1641,
+                    1700,
+                    1730,
+                    1732,
+                    1805,
+                    1830
+                )
+            )
+        )[1] AS ultima_actividad_pre,
+
+        (
+            ARRAY_AGG(
+                a.fecha
+                ORDER BY a.fecha DESC NULLS LAST,
+                         a.codigo_id DESC
+            ) FILTER (
+                WHERE a.codigo_id IN (
+                    1100,
+                    1180,
+                    1181,
+                    1190,
+                    1240,
+                    1252,
+                    1330,
+                    1332,
+                    1333,
+                    1335,
+                    1436,
+                    1437,
+                    1443,
+                    1448,
+                    1449,
+                    1641,
+                    1700,
+                    1730,
+                    1732,
+                    1805,
+                    1830
+                )
+            )
+        )[1] AS fecha_ultima_actividad_pre,
+
+
+        /* =====================================================
+           205 - INGRESO DEMANDA
+           ===================================================== */
+        MAX(a.fecha) FILTER (
+            WHERE a.codigo_id = 1205
+        ) AS ingreso_demanda,
+
+
+        /* =====================================================
+           206 / 210 - DEMANDA PROVEIDA
+           ===================================================== */
+        MAX(a.fecha) FILTER (
+            WHERE a.codigo_id IN (1206, 1210)
+        ) AS demanda_proveida,
+
+
+        /* =====================================================
+           NOTIFICACIÓN POSITIVA
+           ===================================================== */
+        MAX(a.fecha) FILTER (
+            WHERE a.codigo_id IN (
+                1401,
+                1303,
+                1469,
+                1642,
+                1400,
+                1309,
+                1397,
+                1399,
+                1398,
+                1766
+            )
+        ) AS notificacion_positiva,
+
+
+        /* =====================================================
+           NOTIFICACIÓN NEGATIVA
+           ===================================================== */
+        MAX(a.fecha) FILTER (
+            WHERE a.codigo_id IN (
+                1334,
+                1381
+            )
+        ) AS notificacion_negativa,
+
+
+        /* =====================================================
+           EMBARGO POSITIVO
+           ===================================================== */
+        MAX(a.fecha) FILTER (
+            WHERE a.codigo_id IN (
+                1403,
+                1021,
+                1600,
+                1406
+            )
+        ) AS embargo_positivo,
+
+
+        /* =====================================================
+           RESULTADO OFICIO
+           ===================================================== */
+        MAX(a.fecha) FILTER (
+            WHERE a.codigo_id = 1002
+        ) AS resultado_oficio,
+
+
+        /* =====================================================
+           EMBARGO / RETIRO NO VIVIR
+           ===================================================== */
+        MAX(a.fecha) FILTER (
+            WHERE a.codigo_id IN (
+                1404,
+                1415
+            )
+        ) AS embargo_retiro_no_vivir,
+
+
+        /* =====================================================
+           EMBARGO / RETIRO SIN BIENES
+           ===================================================== */
+        MAX(a.fecha) FILTER (
+            WHERE a.codigo_id IN (
+                1816,
+                1817,
+                1469
+            )
+        ) AS embargo_retiro_sin_bienes,
+
+
+        /* =====================================================
+           SOLICITUD ARRESTO
+           ===================================================== */
+        MAX(a.fecha) FILTER (
+            WHERE a.codigo_id = 1450
+        ) AS fecha_solicitud_arresto,
+
+
+        /* =====================================================
+           AUTORIZACIÓN ARRESTO
+           ===================================================== */
+        MAX(a.fecha) FILTER (
+            WHERE a.codigo_id = 1610
+        ) AS fecha_autorizacion_arresto,
+
+
+        /* =====================================================
+           ACTIVIDAD 718
+           ===================================================== */
+        MAX(a.fecha) FILTER (
+            WHERE a.codigo_id = 1718
+        ) AS act_718_revision,
+
+
+        /* =====================================================
+           ACTIVIDAD 713
+           ===================================================== */
+        MAX(a.fecha) FILTER (
+            WHERE a.codigo_id = 1713
+        ) AS fecha_713,
+
+
+        /* =====================================================
+           ACTIVIDAD 052
+           ===================================================== */
+        MAX(a.fecha) FILTER (
+            WHERE a.codigo_id = 1052
+        ) AS fecha_052
+
+    FROM actividades.actividad a
+
+    WHERE a.codigo_id IN (
+        /* Actividades PRE */
+        1100,
+        1180,
+        1181,
+        1190,
+        1240,
+        1252,
+        1330,
+        1332,
+        1333,
+        1335,
+        1436,
+        1437,
+        1443,
+        1448,
+        1449,
+        1641,
+        1700,
+        1730,
+        1732,
+        1805,
+        1830,
+
+        /* 205 */
+        1205,
+
+        /* 206 / 210 */
+        1206,
+        1210,
+
+        /* Notificación positiva */
+        1401,
+        1303,
+        1469,
+        1642,
+        1400,
+        1309,
+        1397,
+        1399,
+        1398,
+        1766,
+
+        /* Notificación negativa */
+        1334,
+        1381,
+
+        /* Embargo positivo */
+        1403,
+        1021,
+        1600,
+        1406,
+
+        /* Oficio */
+        1002,
+
+        /* No vivir */
+        1404,
+        1415,
+
+        /* Sin bienes */
+        1816,
+        1817,
+
+        /* Arresto */
+        1450,
+        1610,
+
+        /* Otras */
+        1718,
+        1713,
+        1052
+    )
+
+    GROUP BY a.cobranza_id
+),
+
+
+/* =============================================================
+   ÚLTIMA ACTIVIDAD JUDICIAL
+   ============================================================= */
+ultima_actividad AS (
+    SELECT DISTINCT ON (a.cobranza_id)
+        a.cobranza_id,
+        a.codigo_id,
+        a.fecha
+    FROM actividades.actividad a
+    ORDER BY
+        a.cobranza_id,
+        a.fecha DESC NULLS LAST,
+        a.codigo_id DESC
+),
+
+
+/* =============================================================
+   DEUDA
+   Se calcula una sola vez por resolución.
+   ============================================================= */
+deuda AS (
+    SELECT
+        d.resolucion,
+        MAX(d.periodo) AS periodo,
+        SUM(d.monto) AS monto_resolucion
+    FROM remesas.deuda d
+    GROUP BY d.resolucion
+),
+
+
+/* =============================================================
+   CAUSA
+   Se mantiene una sola causa por demandado.
+   ============================================================= */
+causa AS (
+    SELECT DISTINCT ON (c.demandado_id)
+        c.demandado_id,
+        c.id,
+        c.rit,
+        c.tribunal_id
+    FROM causas.causa c
+    ORDER BY
+        c.demandado_id,
+        c.id
+),
+
+
+/* =============================================================
+   BASE
+   ============================================================= */
+base AS (
+    SELECT
+
         c.id AS cobranza,
+
         c.resolucion,
+
         ca.agencia_id AS agencia,
+
         de.periodo AS mes,
+
         c.producto_id AS institucion,
+
         'SUCC' AS cliente,
+
         ec.estado AS estado_id,
+
         0 AS envio_acreditacion,
+
         0 AS documento_no_acredita,
+
         ed.estado AS estado_documento,
+
         COALESCE(de.monto_resolucion, 0) AS monto_resolucion,
+
         0 AS rango,
 
         em.rut,
+
         em.dv,
+
         em.razon_social,
 
         cau.rit,
+
         cau.tribunal_id,
 
         tr.tribunal AS juzgado_orpro,
 
         c.producto_id AS codigo_cliente,
+
         'SUCC' AS nombre_cliente,
 
 
@@ -30,72 +384,101 @@ WITH base AS (
            ÚLTIMA ACTIVIDAD JUDICIAL
            ===================================================== */
 
-        act_ultima.codigo_id - 1000 AS cod_ultima_act_judicial,
-        act_ultima.fecha AS fecha_ultima_act_judicial,
+        ua.codigo_id - 1000 AS cod_ultima_act_judicial,
 
-
-        /* =====================================================
-           ÚLTIMA ACTIVIDAD PRE
-           ===================================================== */
-
-        act_pre.codigo_id - 1000 AS ultima_actividad_pre,
-        act_pre.fecha AS fecha_ultima_actividad_pre,
-
-
-        /* =====================================================
-           ACTIVIDADES
-           ===================================================== */
-
-        act_205.fecha AS ingreso_demanda,
-
-        act_206_210.fecha AS demanda_proveida,
-
-        act_notif_pos.fecha AS notificacion_positiva,
-
-        act_notif_neg.fecha AS notificacion_negativa,
-
-        act_emb_pos.fecha AS embargo_positivo,
-
-        act_oficio.fecha AS resultado_oficio,
-
-        act_no_vivir.fecha AS embargo_retiro_no_vivir,
-
-        act_sin_bienes.fecha AS embargo_retiro_sin_bienes,
-
-        act_450.fecha AS fecha_solicitud_arresto,
-
-        act_610.fecha AS fecha_autorizacion_arresto,
-
-        act_718.fecha AS act_718_revision,
-
-        act_713.fecha AS fecha_713,
-
-        act_052.fecha AS fecha_052,
+        ua.fecha AS fecha_ultima_act_judicial,
 
 
         /* =====================================================
            GLOSA
            ===================================================== */
 
-        ac.codigo AS glosa,
+        acc.codigo AS glosa,
+
+
+        /* =====================================================
+           ÚLTIMA ACTIVIDAD PRE
+
+           Se resta 1000 igual que en la query original.
+           ===================================================== */
+
+        aa.ultima_actividad_pre - 1000 AS ultima_actividad_pre,
+
+        aa.fecha_ultima_actividad_pre,
+
+
+        /* =====================================================
+           ÚLTIMO MOVIMIENTO
+           ===================================================== */
+
+        mov_ultimo.tipo_movimiento AS tipo_movimiento_ultimo,
+
+        mov_ultimo.glosa AS glosa_movimiento_ultimo,
+
+        mov_ultimo.fecha AS fecha_ultimo_movimiento,
+
+
+        /* =====================================================
+           ACTIVIDADES
+           ===================================================== */
+
+        aa.ingreso_demanda,
+
+        aa.demanda_proveida,
+
+        aa.notificacion_positiva,
+
+        aa.notificacion_negativa,
+
+        aa.embargo_positivo,
+
+        aa.resultado_oficio,
+
+        aa.embargo_retiro_no_vivir,
+
+        aa.embargo_retiro_sin_bienes,
+
+        aa.fecha_solicitud_arresto,
+
+        aa.fecha_autorizacion_arresto,
+
+        aa.act_718_revision,
+
+        aa.fecha_713,
+
+        aa.fecha_052,
+
+
+        /* =====================================================
+           OPERADOR / RRLL
+           ===================================================== */
 
         'proceso' AS cod_operador,
 
         r.rut AS rut_rrll,
+
         r.dv AS dv_rrll,
+
         r.nombre,
+
         r.ap_paterno,
+
         r.ap_materno,
 
         0 AS telefono,
+
         0 AS correo,
 
+
+        /* =====================================================
+           CONTROL DUPLICADOS
+           ===================================================== */
 
         ROW_NUMBER() OVER (
             PARTITION BY c.id, c.resolucion
             ORDER BY
-                act_pre.fecha DESC NULLS LAST,
-                act_ultima.fecha DESC NULLS LAST
+                aa.fecha_ultima_actividad_pre DESC NULLS LAST,
+                ua.fecha DESC NULLS LAST
         ) AS rn
 
 
@@ -104,6 +487,7 @@ WITH base AS (
 
     /* =========================================================
        AGENCIA
+       Se mantiene el LIMIT 1 original.
        ========================================================= */
 
     LEFT JOIN LATERAL (
@@ -119,17 +503,12 @@ WITH base AS (
        DEUDA
        ========================================================= */
 
-    LEFT JOIN LATERAL (
-        SELECT
-            MAX(d.periodo) AS periodo,
-            SUM(d.monto) AS monto_resolucion
-        FROM remesas.deuda d
-        WHERE d.resolucion = c.resolucion
-    ) de ON TRUE
+    LEFT JOIN deuda de
+        ON de.resolucion = c.resolucion
 
 
     /* =========================================================
-       ESTADO DE COBRANZA
+       ESTADO COBRANZA     
        ========================================================= */
 
     LEFT JOIN LATERAL (
@@ -139,7 +518,6 @@ WITH base AS (
         WHERE ce.cobranza_id = c.id
         LIMIT 1
     ) ce ON TRUE
-
 
     LEFT JOIN gui.estado_cobranza ec
         ON ec.id = ce.estado_id
@@ -157,14 +535,8 @@ WITH base AS (
        CAUSA
        ========================================================= */
 
-    LEFT JOIN LATERAL (
-        SELECT
-            cau.rit,
-            cau.tribunal_id
-        FROM causas.causa cau
-        WHERE cau.demandado_id = c.rut_empleador
-        LIMIT 1
-    ) cau ON TRUE
+    LEFT JOIN causa cau
+        ON cau.demandado_id = c.rut_empleador
 
 
     /* =========================================================
@@ -177,6 +549,7 @@ WITH base AS (
 
     /* =========================================================
        RRLL
+       Se mantiene LIMIT 1 original.
        ========================================================= */
 
     LEFT JOIN LATERAL (
@@ -193,23 +566,23 @@ WITH base AS (
 
 
     /* =========================================================
-       ESTADO DE LA DEUDA
+       ESTADO DOCUMENTO
+       Se mantiene LIMIT 1 original.
        ========================================================= */
 
     LEFT JOIN LATERAL (
         SELECT
             de_estado.estado_id
         FROM recaudacion.deuda_estado de_estado
+
         INNER JOIN remesas.deuda d
             ON d.id = de_estado.deuda_id
+
         WHERE d.resolucion = c.resolucion
+
         LIMIT 1
     ) deuda_estado ON TRUE
 
-
-    /* =========================================================
-       ESTADO DOCUMENTO
-       ========================================================= */
 
     LEFT JOIN gui.estado_documento ed
         ON ed.id = deuda_estado.estado_id
@@ -217,290 +590,63 @@ WITH base AS (
 
     /* =========================================================
        ÚLTIMA ACTIVIDAD JUDICIAL
-       
-       Los códigos se almacenan en BD con +1000.
+       ========================================================= */
+
+    LEFT JOIN ultima_actividad ua
+        ON ua.cobranza_id = c.id
+
+
+    /* =========================================================
+       GLOSA
+       ========================================================= */
+
+    LEFT JOIN actividades.codigo acc
+        ON acc.id = ua.codigo_id
+
+
+    /* =========================================================
+       ACTIVIDADES AGRUPADAS
+       ========================================================= */
+
+    LEFT JOIN actividades_agg aa
+        ON aa.cobranza_id = c.id
+
+
+    /* =========================================================
+       ÚLTIMO MOVIMIENTO
        ========================================================= */
 
     LEFT JOIN LATERAL (
         SELECT
-            a.codigo_id,
-            a.fecha
-        FROM actividades.actividad a
-        WHERE a.cobranza_id = c.id
+            tm.tipo_movimiento,
+            g.glosa,
+            m.fecha
+
+        FROM causas.movimiento m
+
+        LEFT JOIN causas.tipo_movimiento tm
+            ON tm.id = m.tipo_movimiento_id
+
+        LEFT JOIN causas.glosa g
+            ON g.id = m.glosa_id
+
+        WHERE m.causa_id = cau.id
+
         ORDER BY
-            a.fecha DESC,
-            a.codigo_id DESC
+            m.fecha DESC NULLS LAST
+
         LIMIT 1
-    ) act_ultima ON TRUE
 
-
-    /* =========================================================
-       ÚLTIMA ACTIVIDAD PRE
-       ========================================================= */
-
-    LEFT JOIN LATERAL (
-        SELECT
-            a.codigo_id,
-            a.fecha
-        FROM actividades.actividad a
-        WHERE a.cobranza_id = c.id
-          AND a.codigo_id IN (
-                1100,
-                1180,
-                1181,
-                1190,
-                1240,
-                1252,
-                1330,
-                1332,
-                1333,
-                1335,
-                1436,
-                1437,
-                1443,
-                1448,
-                1449,
-                1641,
-                1700,
-                1730,
-                1732,
-                1805,
-                1830
-          )
-        ORDER BY
-            a.fecha DESC,
-            a.codigo_id DESC
-        LIMIT 1
-    ) act_pre ON TRUE
-
-
-    /* =========================================================
-       205 - INGRESO DEMANDA
-       BD = 1205
-       ========================================================= */
-
-    LEFT JOIN LATERAL (
-        SELECT
-            MAX(a.fecha) AS fecha
-        FROM actividades.actividad a
-        WHERE a.cobranza_id = c.id
-          AND a.codigo_id = 1205
-    ) act_205 ON TRUE
-
-
-    /* =========================================================
-       206 / 210 - DEMANDA PROVEÍDA
-       BD = 1206 / 1210
-       ========================================================= */
-
-    LEFT JOIN LATERAL (
-        SELECT
-            MAX(a.fecha) AS fecha
-        FROM actividades.actividad a
-        WHERE a.cobranza_id = c.id
-          AND a.codigo_id IN (
-                1206,
-                1210
-          )
-    ) act_206_210 ON TRUE
-
-
-    /* =========================================================
-       NOTIFICACIÓN POSITIVA
-       BD = 1401,1303,1469,1642,1400,
-            1309,1397,1399,1398
-       ========================================================= */
-
-    LEFT JOIN LATERAL (
-        SELECT
-            MAX(a.fecha) AS fecha
-        FROM actividades.actividad a
-        WHERE a.cobranza_id = c.id
-          AND a.codigo_id IN (
-                1401,
-                1303,
-                1469,
-                1642,
-                1400,
-                1309,
-                1397,
-                1399,
-                1398
-          )
-    ) act_notif_pos ON TRUE
-
-
-    /* =========================================================
-       NOTIFICACIÓN NEGATIVA
-       BD = 1334 / 1381
-       ========================================================= */
-
-    LEFT JOIN LATERAL (
-        SELECT
-            MAX(a.fecha) AS fecha
-        FROM actividades.actividad a
-        WHERE a.cobranza_id = c.id
-          AND a.codigo_id IN (
-                1334,
-                1381
-          )
-    ) act_notif_neg ON TRUE
-
-
-    /* =========================================================
-       EMBARGO POSITIVO
-       BD = 1403 / 1021 / 1600 / 1406
-       ========================================================= */
-
-    LEFT JOIN LATERAL (
-        SELECT
-            MAX(a.fecha) AS fecha
-        FROM actividades.actividad a
-        WHERE a.cobranza_id = c.id
-          AND a.codigo_id IN (
-                1403,
-                1021,
-                1600,
-                1406
-          )
-    ) act_emb_pos ON TRUE
-
-
-    /* =========================================================
-       RESULTADO OFICIO
-       002 -> BD 1002
-       ========================================================= */
-
-    LEFT JOIN LATERAL (
-        SELECT
-            MAX(a.fecha) AS fecha
-        FROM actividades.actividad a
-        WHERE a.cobranza_id = c.id
-          AND a.codigo_id = 1002
-    ) act_oficio ON TRUE
-
-
-    /* =========================================================
-       EMBARGO / RETIRO FRUSTRADO - NO VIVIR
-       BD = 1404 / 1415
-       ========================================================= */
-
-    LEFT JOIN LATERAL (
-        SELECT
-            MAX(a.fecha) AS fecha
-        FROM actividades.actividad a
-        WHERE a.cobranza_id = c.id
-          AND a.codigo_id IN (
-                1404,
-                1415
-          )
-    ) act_no_vivir ON TRUE
-
-
-    /* =========================================================
-       EMBARGO / RETIRO FRUSTRADO - SIN BIENES
-       BD = 1816 / 1817 / 1469
-       ========================================================= */
-
-    LEFT JOIN LATERAL (
-        SELECT
-            MAX(a.fecha) AS fecha
-        FROM actividades.actividad a
-        WHERE a.cobranza_id = c.id
-          AND a.codigo_id IN (
-                1816,
-                1817,
-                1469
-          )
-    ) act_sin_bienes ON TRUE
-
-
-    /* =========================================================
-       SOLICITUD ARRESTO
-       450 -> BD 1450
-       ========================================================= */
-
-    LEFT JOIN LATERAL (
-        SELECT
-            MAX(a.fecha) AS fecha
-        FROM actividades.actividad a
-        WHERE a.cobranza_id = c.id
-          AND a.codigo_id = 1450
-    ) act_450 ON TRUE
-
-
-    /* =========================================================
-       AUTORIZACIÓN ARRESTO
-       610 -> BD 1610
-       ========================================================= */
-
-    LEFT JOIN LATERAL (
-        SELECT
-            MAX(a.fecha) AS fecha
-        FROM actividades.actividad a
-        WHERE a.cobranza_id = c.id
-          AND a.codigo_id = 1610
-    ) act_610 ON TRUE
-
-
-    /* =========================================================
-       ACTIVIDAD 718
-       BD = 1718
-       ========================================================= */
-
-    LEFT JOIN LATERAL (
-        SELECT
-            MAX(a.fecha) AS fecha
-        FROM actividades.actividad a
-        WHERE a.cobranza_id = c.id
-          AND a.codigo_id = 1718
-    ) act_718 ON TRUE
-
-
-    /* =========================================================
-       ACTIVIDAD 713
-       BD = 1713
-       ========================================================= */
-
-    LEFT JOIN LATERAL (
-        SELECT
-            MAX(a.fecha) AS fecha
-        FROM actividades.actividad a
-        WHERE a.cobranza_id = c.id
-          AND a.codigo_id = 1713
-    ) act_713 ON TRUE
-
-
-    /* =========================================================
-       ACTIVIDAD 052
-       BD = 1052
-       ========================================================= */
-
-    LEFT JOIN LATERAL (
-        SELECT
-            MAX(a.fecha) AS fecha
-        FROM actividades.actividad a
-        WHERE a.cobranza_id = c.id
-          AND a.codigo_id = 1052
-    ) act_052 ON TRUE
-
-
-    /* =========================================================
-       CÓDIGO / GLOSA
-       ========================================================= */
-
-    LEFT JOIN actividades.codigo ac
-        ON ac.id = act_pre.codigo_id
+    ) mov_ultimo ON TRUE
 
     WHERE c.producto_id = 'IPS'
-    AND (
-        CAST(:fecha_ini AS timestamp) IS NULL
-        OR CAST(:fecha_fin AS timestamp) IS NULL
-        OR c.fecha BETWEEN
-            CAST(:fecha_ini AS timestamp)
-            AND CAST(:fecha_fin AS timestamp)
-        )
-
+      AND (
+          CAST(:fecha_ini AS timestamp) IS NULL
+          OR CAST(:fecha_fin AS timestamp) IS NULL
+          OR c.fecha BETWEEN
+              CAST(:fecha_ini AS timestamp)
+              AND CAST(:fecha_fin AS timestamp)
+      )
 )
 
 
@@ -536,9 +682,11 @@ SELECT
     cod_ultima_act_judicial AS
         "Cod Ult. Act Judicial",
 
-    glosa AS "Glosa",
+    glosa AS
+        "Glosa",
 
-    fecha_ultima_act_judicial AS "Fecha",
+    fecha_ultima_act_judicial AS
+        "Fecha",
 
     ingreso_demanda AS
         "Ingreso Demanda (205)",
@@ -547,7 +695,7 @@ SELECT
         "Demanda Proveida (206 ó 210)",
 
     notificacion_positiva AS
-        "Notificación positiva (401-303-469-642-400-309-397-399-398)",
+        "Notificación positiva (401-303-469-642-400-309-397-399-398-766)",
 
     notificacion_negativa AS
         "Notificación negativa (334-381)",
@@ -570,13 +718,13 @@ SELECT
     fecha_autorizacion_arresto AS
         "Fecha autorización arresto (610)",
 
-    NULL AS
+    tipo_movimiento_ultimo AS
         "Cod. EEPP O ACTUACION RECEPTOR",
 
-    NULL AS
+    glosa_movimiento_ultimo AS
         "Glosa EEPP o ACTUACION RECEPTOR",
 
-    NULL AS
+    fecha_ultimo_movimiento AS
         "Fecha EEPP O ACTUACION RECEPTOR",
 
     estado_id AS
