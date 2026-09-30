@@ -204,22 +204,7 @@ actividades_agg AS (
            ===================================================== */
         MAX(a.fecha) FILTER (
             WHERE a.codigo_id = 1052
-        ) AS fecha_052,
-
-
-        /* =====================================================
-            ACTIVIDAD 311 - CMF
-        ===================================================== */
-        MAX(a.fecha) FILTER (
-            WHERE a.codigo_id = 1311
-        ) AS fecha_cmf,
-
-        /* =====================================================
-           ACTIVIDAD 313 - RESULTADO CMF
-        ===================================================== */
-        MAX(a.fecha) FILTER (
-            WHERE a.codigo_id = 1313
-        ) AS fecha_resultado_cmf
+        ) AS fecha_052
 
     FROM actividades.actividad a
 
@@ -294,9 +279,7 @@ actividades_agg AS (
         /* Otras */
         1718,
         1713,
-        1052,
-        1311,
-        1313
+        1052
     )
 
     GROUP BY a.cobranza_id
@@ -464,10 +447,6 @@ base AS (
         aa.fecha_713,
 
         aa.fecha_052,
-
-        aa.fecha_cmf,
-
-        aa.fecha_resultado_cmf,
 
 
         /* =====================================================
@@ -771,12 +750,6 @@ SELECT
 
     fecha_052 AS
         "Fecha 052",
-
-    fecha_cmf AS
-        "CMF",
-
-    fecha_resultado_cmf AS
-        "Resultado CMF",
 
     NULL AS
         "Juicio > 2 años",
