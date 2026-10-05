@@ -53,6 +53,7 @@ SELECT
    act.fecha_339,
    act.fecha_340,
    act.fecha_381,
+   act.fecha_382,
    act.fecha_398,
    act.fecha_399,
    act.fecha_401_303_469_642_400_309_397,
@@ -187,6 +188,7 @@ LEFT JOIN LATERAL (
        MAX(a.fecha) FILTER (WHERE a.codigo_id = 1339) AS fecha_339,
        MAX(a.fecha) FILTER (WHERE a.codigo_id = 1340) AS fecha_340,
        MAX(a.fecha) FILTER (WHERE a.codigo_id = 1381) AS fecha_381,
+       MAX(a.fecha) FILTER (WHERE a.codigo_id = 1382) AS fecha_382,
        MAX(a.fecha) FILTER (WHERE a.codigo_id = 1398) AS fecha_398,
        MAX(a.fecha) FILTER (WHERE a.codigo_id = 1399) AS fecha_399,
        -- Fecha 401 o 303 o 469 o 642 o 400 o 309 u 397
