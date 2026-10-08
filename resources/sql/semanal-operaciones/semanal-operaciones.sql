@@ -1,5 +1,6 @@
 SELECT
    c.id AS cobranza,
+   c.resolucion AS resolucion,
    c.fecha AS fecha_remesa,
    (
 	    SELECT ca2.agencia_id
