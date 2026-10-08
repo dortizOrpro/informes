@@ -10,7 +10,7 @@ SELECT
 	) AS agencia,
    0 AS grupo,
    em.rut,
-   em.dv AS dig,
+   COALESCE(NULLIF(TRIM(em.dv), ''), 'K') AS dig,
    em.razon_social AS nombre,
    cr.rit AS rol,
    tr.tribunal AS juzgado,
@@ -98,6 +98,13 @@ SELECT
    act.fecha_921,
    act.fecha_994,
    act.fecha_997,
+   -- ACTIVIDADES EXTRAJUDICIALES
+   act.extrajudicial_700,
+   act.extrajudicial_210,
+   act.extrajudicial_449,
+   act.extrajudicial_334,
+   act.extrajudicial_330,
+   act.extrajudicial_787,
    -- ÚLTIMA ACTIVIDAD
    ult.codigo_ultima_actividad,
    ult.glosa_ultima_actividad,
@@ -246,10 +253,27 @@ LEFT JOIN LATERAL (
        MAX(a.fecha) FILTER (WHERE a.codigo_id = 1837) AS fecha_837,
        MAX(a.fecha) FILTER (WHERE a.codigo_id = 1921) AS fecha_921,
        MAX(a.fecha) FILTER (WHERE a.codigo_id = 1994) AS fecha_994,
-       MAX(a.fecha) FILTER (WHERE a.codigo_id = 1997) AS fecha_997
+       MAX(a.fecha) FILTER (WHERE a.codigo_id = 1997) AS fecha_997,
+       -- ACTIVIDADES EXTRAJUDICIALES
+       MAX(a.fecha) FILTER (WHERE a.codigo_id = 2700) AS extrajudicial_700,
+       MAX(a.fecha) FILTER (WHERE a.codigo_id = 2210) AS extrajudicial_210,
+       MAX(a.fecha) FILTER (WHERE a.codigo_id = 2449) AS extrajudicial_449,
+       MAX(a.fecha) FILTER (WHERE a.codigo_id = 2334) AS extrajudicial_334,
+       MAX(a.fecha) FILTER (WHERE a.codigo_id = 2330) AS extrajudicial_330,
+       MAX(a.fecha) FILTER (WHERE a.codigo_id = 2787) AS extrajudicial_787
    FROM actividades.actividad a
    WHERE a.cobranza_id = c.id
-     AND a.codigo_id BETWEEN 1000 AND 1999
+   AND (
+      a.codigo_id BETWEEN 1000 AND 1999
+      OR a.codigo_id IN (
+          2700, -- Compromiso de pago
+          2210, -- Incumplimiento de pago
+          2449, -- Liquidación enviada
+          2334, -- No contesta
+          2330, -- Llamado positivo
+          2787  -- Negativa de pago
+      )
+  )
 ) act ON TRUE
 -- ============================================================
 -- ÚLTIMA Y PENÚLTIMA ACTIVIDAD
