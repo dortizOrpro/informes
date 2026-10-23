@@ -332,24 +332,6 @@ deuda AS (
     GROUP BY d.resolucion
 ),
 
-
-/* =============================================================
-   CAUSA
-   Se mantiene una sola causa por demandado.
-   ============================================================= */
-causa AS (
-    SELECT DISTINCT ON (c.demandado_id)
-        c.demandado_id,
-        c.id,
-        c.rit,
-        c.tribunal_id
-    FROM causas.causa c
-    ORDER BY
-        c.demandado_id,
-        c.id
-),
-
-
 /* =============================================================
    BASE
    ============================================================= */
@@ -386,9 +368,9 @@ base AS (
 
         em.razon_social,
 
-        cau.rit,
+        cr.rit,
 
-        cau.tribunal_id,
+        cr.tribunal_sp AS tribunal_id,
 
         tr.tribunal AS juzgado_orpro,
 
@@ -428,11 +410,11 @@ base AS (
            ÚLTIMO MOVIMIENTO
            ===================================================== */
 
-        mov_ultimo.tipo_movimiento AS tipo_movimiento_ultimo,
+        tm_ultimo.tipo_movimiento AS tipo_movimiento_ultimo,
 
-        mov_ultimo.glosa AS glosa_movimiento_ultimo,
+        g_ultima.glosa AS glosa_movimiento_ultimo,
 
-        mov_ultimo.fecha AS fecha_ultimo_movimiento,
+        mov.fecha AS fecha_ultimo_movimiento,
 
 
         /* =====================================================
@@ -556,16 +538,14 @@ base AS (
        CAUSA
        ========================================================= */
 
-    LEFT JOIN causa cau
-        ON cau.demandado_id = c.rut_empleador
-
-
+    LEFT JOIN cobranzas.cobranza_rit cr
+        ON cr.cobranza_id = c.id
     /* =========================================================
        TRIBUNAL
        ========================================================= */
 
     LEFT JOIN gui.tribunal tr
-        ON tr.id = cau.tribunal_id
+        ON tr.id = cr.tribunal_sp
 
 
     /* =========================================================
@@ -639,35 +619,30 @@ base AS (
 
     LEFT JOIN LATERAL (
         SELECT
-            tm.tipo_movimiento,
-            g.glosa,
+            m.tipo_movimiento_id,
+            m.glosa_id,
             m.fecha
-
         FROM causas.movimiento m
-
-        LEFT JOIN causas.tipo_movimiento tm
-            ON tm.id = m.tipo_movimiento_id
-
-        LEFT JOIN causas.glosa g
-            ON g.id = m.glosa_id
-
-        WHERE m.causa_id = cau.id
-
+        WHERE m.causa_id = cr.causa_id
         ORDER BY
             m.fecha DESC NULLS LAST
-
         LIMIT 1
+    ) mov ON TRUE
 
-    ) mov_ultimo ON TRUE
+    LEFT JOIN causas.tipo_movimiento tm_ultimo
+        ON tm_ultimo.id = mov.tipo_movimiento_id
+
+    LEFT JOIN causas.glosa g_ultima
+        ON g_ultima.id = mov.glosa_id
 
     WHERE c.producto_id = 'IPS'
-      AND (
-          CAST(:fecha_ini AS timestamp) IS NULL
-          OR CAST(:fecha_fin AS timestamp) IS NULL
-          OR c.fecha BETWEEN
-              CAST(:fecha_ini AS timestamp)
-              AND CAST(:fecha_fin AS timestamp)
-      )
+        AND (
+            CAST(:fecha_ini AS timestamp) IS NULL
+            OR CAST(:fecha_fin AS timestamp) IS NULL
+            OR c.fecha BETWEEN
+                CAST(:fecha_ini AS timestamp)
+                AND CAST(:fecha_fin AS timestamp)
+        )
 )
 
 
