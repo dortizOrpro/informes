@@ -223,7 +223,8 @@ actividades_agg AS (
 
     FROM actividades.actividad a
 
-    WHERE a.codigo_id IN (
+    WHERE a.deleted_at IS NULL
+    AND a.codigo_id IN (
         /* Actividades PRE */
         1100,
         1180,
@@ -312,6 +313,7 @@ ultima_actividad AS (
         a.codigo_id,
         a.fecha
     FROM actividades.actividad a
+    WHERE a.deleted_at IS NULL
     ORDER BY
         a.cobranza_id,
         a.fecha DESC NULLS LAST,

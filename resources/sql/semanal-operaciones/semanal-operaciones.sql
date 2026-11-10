@@ -232,8 +232,9 @@ LEFT JOIN LATERAL (
        MAX(a.fecha) FILTER (WHERE a.codigo_id = 2330) AS extrajudicial_330,
        MAX(a.fecha) FILTER (WHERE a.codigo_id = 2787) AS extrajudicial_787
    FROM actividades.actividad a
-   WHERE a.cobranza_id = c.id
-   AND (
+    WHERE a.cobranza_id = c.id
+    AND a.deleted_at IS NULL
+    AND (
       a.codigo_id BETWEEN 1000 AND 1999
       OR a.codigo_id IN (
           2700, -- Compromiso de pago
@@ -300,7 +301,8 @@ LEFT JOIN LATERAL (
        LEFT JOIN actividades.codigo ac
            ON ac.id = a.codigo_id
        WHERE a.cobranza_id = c.id
-         AND a.codigo_id BETWEEN 1000 AND 1999
+        AND a.deleted_at IS NULL
+        AND a.codigo_id BETWEEN 1000 AND 1999
    ) x
    WHERE x.rn <= 2
 ) ult ON TRUE
